@@ -20,10 +20,9 @@ namespace ApiWeather.Dao
             collectionName = settings.Collection;
         }
         
-        public async Task<List<T>> ListOrEmpty<T>(string filter)
+        public async Task<List<T>> ListOrEmpty<T>(BsonDocument filter)
         {
-            var ff = filter.ToBsonDocument();
-            return await Execute<T>(query => query.Find(filter.ToBsonDocument()).ToListAsync()).ConfigureAwait(false);
+            return await Execute<T>(query => query.Find(filter).ToListAsync()).ConfigureAwait(false);
         }
         
         private async Task<List<T>> Execute<T>(Func<IMongoCollection<T>, Task<List<T>>> query)

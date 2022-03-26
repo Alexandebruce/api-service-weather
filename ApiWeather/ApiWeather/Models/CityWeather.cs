@@ -1,8 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ApiWeather.Models
 {
+    public class BaseElement
+    {
+        [BsonId]
+        public ObjectId Id { get; set; }
+        public DateTime Date { get; set; }
+        public List<CityWeather> Data { get; set; }
+    }
+    
     public class CityWeather
     {
         public string CityName { get; set; }
