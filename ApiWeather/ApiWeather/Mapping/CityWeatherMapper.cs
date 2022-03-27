@@ -44,7 +44,7 @@ namespace ApiWeather.Mapping
         {
             return dayWeathers == null ? new List<DayWeather>() : dayWeathers
                 .Select((x, y) => new {Index = y, Value = x})
-                .Select(v => v.Value.MapToDomain(recordDate.AddDays(v.Index).AddHours(3))).ToList();
+                .Select(v => v.Value.MapToDomain(recordDate.ToLocalTime().AddDays(v.Index))).ToList();
         }
 
         public static CityWeather MapToDomain(this DbCityWeather cityWeather)
