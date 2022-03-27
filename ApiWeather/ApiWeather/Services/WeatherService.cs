@@ -49,9 +49,7 @@ namespace ApiWeather.Services
                 new BsonDocument("Date", new BsonDocument("$lte", dateTo))
             });
             
-            var sort = new { Date = -1 };
-            
-            var sortedWeatherList = await mongoContext.SortedListOrEmpty<DbBaseElement>(filter, sort.ToBsonDocument(), 10);
+            var sortedWeatherList = await mongoContext.SortedListOrEmpty<DbBaseElement>(filter, new { Date = -1 }.ToBsonDocument(), 10);
 
             var dbLastSortedWeatherRecord = sortedWeatherList.Select(x => x.Data)
                        .SelectMany(d => d)
