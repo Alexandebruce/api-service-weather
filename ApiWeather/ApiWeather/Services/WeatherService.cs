@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiWeather.Dao.Interfaces;
+using ApiWeather.Mapping;
 using ApiWeather.Models;
 using ApiWeather.Services.Interfaces;
 using MongoDB.Bson;
@@ -19,7 +20,7 @@ namespace ApiWeather.Services
             this.mongoContext = mongoContext;
         }
 
-        public async Task<List<BaseElement>> GetWeather(string startDate, string endDate)
+        public async Task<List<DbBaseElement>> GetWeather(string startDate, string endDate)
         {
             var dateFrom = Convert.ToDateTime(DateTime.Parse(startDate).ToUniversalTime().ToString("O"), CultureInfo.InvariantCulture);
             var dateTo = Convert.ToDateTime(DateTime.Parse(endDate).ToUniversalTime().ToString("O"), CultureInfo.InvariantCulture);
@@ -30,7 +31,7 @@ namespace ApiWeather.Services
                 new BsonDocument("Date", new BsonDocument("$lte", dateTo))
             });
             
-            return await mongoContext.ListOrEmpty<BaseElement>(filter);
+            return await mongoContext.ListOrEmpty<DbBaseElement>(filter);
         }
         
         public async Task<CityWeather> GetConcreteWeather(string targetDate, string city)
@@ -50,12 +51,14 @@ namespace ApiWeather.Services
             
             var sort = new { Date = -1 };
             
-            var sortedWeatherList = await mongoContext.SortedListOrEmpty<BaseElement>(filter, sort.ToBsonDocument(), 10);
+            var sortedWeatherList = await mongoContext.SortedListOrEmpty<DbBaseElement>(filter, sort.ToBsonDocument(), 10);
 
-            return sortedWeatherList.Select(x => x.Data)
+            var dbLastSortedWeatherRecord = sortedWeatherList.Select(x => x.Data)
                        .SelectMany(d => d)
                        .FirstOrDefault(x => x.CityName == city)
-                   ?? new CityWeather();
+                   ?? new DbCityWeather();
+
+            return dbLastSortedWeatherRecord.MapToDomain();
         }
     }
 }
