@@ -15,6 +15,11 @@ namespace ApiWeather.Models
     
     public class CityWeather
     {
+        public CityWeather()
+        {
+            WeatherByDays = new List<DayWeather>();
+        }
+        
         public string CityName { get; set; }
         public DateTime Date { get; set; }
         public List<DayWeather> WeatherByDays { get; set; }

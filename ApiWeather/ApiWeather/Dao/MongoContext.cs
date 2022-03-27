@@ -22,13 +22,20 @@ namespace ApiWeather.Dao
         
         public async Task<List<T>> ListOrEmpty<T>(BsonDocument filter)
         {
-            return await Execute<T>(query => query.Find(filter).ToListAsync()).ConfigureAwait(false);
+            return await Execute<T>(query => query.Find(filter).ToListAsync());
         }
         
+        public async Task<List<T>> SortedListOrEmpty<T>(BsonDocument filter, BsonDocument sort, int limit)
+        { 
+            return await Execute<T>(query => query.Find(filter).Sort(
+                new BsonDocumentSortDefinition<T>(sort)
+            ).Limit(limit).ToListAsync());
+        }
+
         private async Task<List<T>> Execute<T>(Func<IMongoCollection<T>, Task<List<T>>> query)
         {
             IMongoCollection<T> collection = database.GetCollection<T>(collectionName);
-            return await query(collection).ConfigureAwait(false);
+            return await query(collection);
         }
     }
 }

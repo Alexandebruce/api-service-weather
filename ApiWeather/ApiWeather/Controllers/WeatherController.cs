@@ -20,5 +20,11 @@ namespace ApiWeather.Controllers
         {
             return Ok(await weatherService.GetWeather(startDate, endDate));
         }
+        
+        [HttpGet("/date/{targetDate}/city/{city}")]
+        public async Task<IActionResult> GetConcreteWeather([FromRoute] string targetDate, string city)
+        {
+            return Ok(await weatherService.GetConcreteWeather(targetDate, city));
+        }
     }
 }
